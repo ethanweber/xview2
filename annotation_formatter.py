@@ -59,6 +59,10 @@ class AnnotationFormatter(object):
 
         xy_features = json_data["features"]["xy"]
         for xy_feature in xy_features:
+            # try:
+            #     print(xy_feature["properties"]["subtype"])
+            # except:
+            #     pass
             polygon_text = xy_feature["wkt"]
             annotation_uid = xy_feature["properties"]["uid"]
             self.annotation_uid_to_annotation_id[annotation_uid] = self.annotation_count
@@ -91,8 +95,7 @@ class AnnotationFormatter(object):
 
             annotation_data = {
                 "segmentation": [polygon],
-                "area": 0,
-                "is_crowd": 0,
+                "iscrowd": 0,
                 "image_id": image_id,
                 "category_id": 1,
                 "id": self.annotation_count,
@@ -122,6 +125,4 @@ if __name__ == "__main__":
     annotation_files = glob.glob("data/train/labels/*")
     for filename in annotation_files:
         formatter.add_image_from_filename(filename)
-        # TODO(ethan): remove this for all files
-        break
     formatter.write_to_json("coco_format.json")
