@@ -27,3 +27,7 @@ https://github.com/cocodataset/cocoapi/issues/49
 # to run
 python detectron2_repo/tools/train_net.py --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_3x.yaml --num-gpus 1
 ```
+
+# submission
+
+
