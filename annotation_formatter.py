@@ -32,15 +32,6 @@ class LocalizationAnnotationFormatter(object):
     image_uid_to_image_id = {}
     annotation_uid_to_annotation_id = {}
 
-    # TODO: handle the merging of these and use
-    class_to_index_mappings = {
-        "no-damage": 0,
-        "minor-damage": 1,
-        "major-damage": 2,
-        "destroyed": 3
-    }
-
-
     def __init__(self, instance_segmentation=True, damage_assessment= False):
         """
         If instance_segmentation=False, then use "stuff segmentation" (semantic segmentation)
@@ -215,7 +206,6 @@ class DamageAnnotationFormatter(object):
     image_uid_to_image_id = {}
     annotation_uid_to_annotation_id = {}
 
-    # TODO: handle the merging of these and use
     class_to_index_mappings = {
         "no-damage": 0,
         "minor-damage": 1,
@@ -306,14 +296,6 @@ class DamageAnnotationFormatter(object):
                           }
                         self.annotations.append(annotation_data)
         else:
-
-            # TODO: handle the merging of these and use
-            class_to_index_mappings = {
-                "no-damage": 0,
-                "minor-damage": 1,
-                "major-damage": 2,
-                 "destroyed": 3
-            }
             
             # using semantic (stuff) segmentation annotation format
             polygons = []
