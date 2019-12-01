@@ -296,6 +296,14 @@ class DamageAnnotationFormatter(object):
                           }
                         self.annotations.append(annotation_data)
         else:
+
+            # TODO: handle the merging of these and use
+            class_to_index_mappings = {
+                "no-damage": 0,
+                "minor-damage": 1,
+                "major-damage": 2,
+                 "destroyed": 3
+            }
             
             # using semantic (stuff) segmentation annotation format
             polygons = []
@@ -331,7 +339,7 @@ class DamageAnnotationFormatter(object):
 
                     self.annotation_count += 1
                     annotation_data = {
-                        "segmentation": polygons,
+                        "segmentation": [polygon],
                         "image_id": image_id,
                         "category_id": class_to_index_mappings[xy_feature["properties"]["subtype"]],
                          "id": self.annotation_count,
