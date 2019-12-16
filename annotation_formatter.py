@@ -246,14 +246,18 @@ class DamageAnnotationFormatter(object):
         }
         self.images.append(image_data)
 
+        # TODO: handle the merging of these and use
+        class_to_index_mappings = {
+            "no-damage": 0,
+            "minor-damage": 1,
+            "major-damage": 2,
+            "destroyed": 3
+        }
+
         xy_features = json_data["features"]["xy"]
         if self.instance_segmentation:
                 for xy_feature in xy_features:
                     if xy_feature["properties"]["subtype"] != u'un-classified':
-                        # try:
-                        #     print(xy_feature["properties"]["subtype"])
-                        # except:
-                        #     pass
                         polygon_text = xy_feature["wkt"]
                         annotation_uid = xy_feature["properties"]["uid"]
 
@@ -296,56 +300,46 @@ class DamageAnnotationFormatter(object):
                           }
                         self.annotations.append(annotation_data)
         else:
-
-            # TODO: handle the merging of these and use
-            class_to_index_mappings = {
-                "no-damage": 0,
-                "minor-damage": 1,
-                "major-damage": 2,
-                 "destroyed": 3
-            }
+            for label in class_to_index_mappings.keys():
             
-            # using semantic (stuff) segmentation annotation format
-            polygons = []
-            # TODO: confirm assumption that polygons don't overlap
-            total_area = 0
-            for xy_feature in xy_features:
-                if xy_feature["properties"]["subtype"] != u'un-classified':
-                # TODO: use the subtype (mentioned above with the 4 damage levels)
-                    # if "subtype" in xy_feature["properties"].keys():
-                    #     subtype = xy_feature["properties"]["subtype"]
-                    #     print(subtype)
-                    polygon_text = xy_feature["wkt"]
-                    annotation_uid = xy_feature["properties"]["uid"]
-                    polygon_values = polygon_text[
-                        polygon_text.find("((") + 2:-2].replace(",", "").split(" ")
-                            
-                    polygon = []
-                    x_coords = []
-                    y_coords = []
-                    for i in range(0, len(polygon_values), 2):
-                        x, y = float(polygon_values[i]), float(polygon_values[i+1])
-                        x_coords.append(x)
-                        y_coords.append(y)
-                        polygon.append(x)
-                        polygon.append(y)
-                    
-                    polygons.append(polygon)
+                # using semantic (stuff) segmentation annotation format
+                polygons = []
+                # TODO: confirm assumption that polygons don't overlap
+                total_area = 0
+                for xy_feature in xy_features:
+                    if xy_feature["properties"]["subtype"] == label:
+                        polygon_text = xy_feature["wkt"]
+                        annotation_uid = xy_feature["properties"]["uid"]
+                        polygon_values = polygon_text[
+                            polygon_text.find("((") + 2:-2].replace(",", "").split(" ")
+                                
+                        polygon = []
+                        x_coords = []
+                        y_coords = []
+                        for i in range(0, len(polygon_values), 2):
+                            x, y = float(polygon_values[i]), float(polygon_values[i+1])
+                            x_coords.append(x)
+                            y_coords.append(y)
+                            polygon.append(x)
+                            polygon.append(y)
+                        
+                        polygons.append(polygon)
 
-                    # height and width from original image
-                    rle = maskUtils.frPyObjects([polygon], height, width)
-                    area = maskUtils.area(rle)[0]
-                    total_area += area
+                        # height and width from original image
+                        rle = maskUtils.frPyObjects([polygon], height, width)
+                        area = maskUtils.area(rle)[0]
+                        total_area += area
 
-                    self.annotation_count += 1
-                    annotation_data = {
-                        "segmentation": [polygon],
-                        "image_id": image_id,
-                        "category_id": class_to_index_mappings[xy_feature["properties"]["subtype"]],
-                         "id": self.annotation_count,
-                        "area": float(total_area)
-                    }
-                    self.annotations.append(annotation_data)
+                self.annotation_count += 1
+                annotation_data = {
+                    "segmentation": polygons,
+                    "image_id": image_id,
+                    "category_id": class_to_index_mappings[label],
+                    "id": self.annotation_count,
+                    "area": float(total_area)
+                }
+                self.annotations.append(annotation_data)
+
     def write_to_json(self, filename):
         data = {
             "info": self.info,
