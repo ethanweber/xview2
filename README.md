@@ -20,6 +20,18 @@ Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
 
 Then create a .zip folder containing all the images (in both folders) and submit to xview2.
 
+# Setup
+
+Make these folders:
+```
+metrics/PRED_DIR/
+metrics/TARG_DIR/
+output_damage/
+output_localization/
+```
+
+Make sure to change any hardcoded paths, such as with `ethanweber`, to be your path. TODO(ethan): fix this.
+
 # Run the Model
 
 Make sure that `detectron2_repo` submodule is up to date with the `master` branch.
