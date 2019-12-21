@@ -1,0 +1,17 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+DATASETS:
+  TRAIN: ("combined_xview_instance_segmentation_dataset_train",)
+  TEST: ("combined_xview_instance_segmentation_dataset_val",)
+MODEL:
+  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  MASK_ON: True
+  ROI_HEADS:
+    NUM_CLASSES: 1
+  RESNETS:
+    DEPTH: 50
+SOLVER:
+  IMS_PER_BATCH: 4
+  BASE_LR: 0.002
+OUTPUT_DIR: "./outputs/output_localization_04"
+TEST:
+  EVAL_PERIOD: 10000

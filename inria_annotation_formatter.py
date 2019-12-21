@@ -122,7 +122,7 @@ class AnnotationFormatter(object):
 
         # read filename
         image_data = {
-            "file_name": file_name,
+            "file_name": os.path.basename(file_name),
             "height": height,
             "width": width,
             "id": image_id
@@ -140,8 +140,7 @@ class AnnotationFormatter(object):
         category_id = 1
         for color, sub_mask in sub_masks.items():
             annotation = self.create_sub_mask_annotation(sub_mask, image_id, category_id, annotation_id, is_crowd)
-            self.annotations.append(annotation)        
-        self.annotations.append(annotation)
+            self.annotations.append(annotation)
 
     def write_to_json(self, filename):
         data = {
@@ -158,6 +157,7 @@ class AnnotationFormatter(object):
 if __name__ == "__main__":
     formatter = AnnotationFormatter()
     annotation_files = glob.glob("data/inria/train/gt/*")
-    for filename in annotation_files:
+    from tqdm import tqdm
+    for filename in tqdm(annotation_files):
         formatter.add_image_from_filename(filename)
     formatter.write_to_json("inria_buildings_annotations.json")

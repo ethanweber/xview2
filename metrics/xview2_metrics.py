@@ -22,15 +22,15 @@ from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from PIL import Image
 from typing import Union, List
+import glob
 
 class PathHandler:
-    def __init__(self, pred_dir:Path, targ_dir:Path, img_id:str, test_hold:str):
+    def __init__(self, pred_dir:Path, targ_dir:Path, img_id:str):
         """
         Args:
             pred_dir  (Path): directory of localization and damage predictions
             targ_dir  (Path): directory of localization and damage targets
             img_id    (str) : 5 digit string of image id
-            test_hold (str) : either 'test' or 'hold'. Most likely 'test' unless you have access to holdout set
         """
         assert isinstance(pred_dir, Path), f"pred_dir should be of type Path, got {type(pred_dir)}"
         assert pred_dir.is_dir(), f"Directory '{pred_dir}' does not exist or is not a directory"
@@ -38,16 +38,19 @@ class PathHandler:
         assert isinstance(targ_dir, Path), f"targ_dir '{targ_dir}' should be of type Path, got {type(pred_dir)}"
         assert targ_dir.is_dir(), f"Directory '{targ_dir}' does not exist or is not a directory"
         
-        assert test_hold in ['test', 'hold'], f"test_hold '{test_hold}' was not one of 'test' or 'hold'"
-        
-        self.lp = pred_dir/f"{test_hold}_localization_{img_id}_prediction.png" # localization prediction
-        self.dp = pred_dir/f"{test_hold}_damage_{img_id}_prediction.png" # damage prediction
-        self.lt = targ_dir/f"{test_hold}_localization_{img_id}_target.png" # localization target
-        self.dt = targ_dir/f"{test_hold}_damage_{img_id}_target.png" # damage target
+        temp = glob.glob(os.path.join(pred_dir, "*{}_pre_disaster.png".format(img_id)))
+        self.lp = temp[0] if len(temp) > 0 else None # localization prediction
+        temp = glob.glob(os.path.join(pred_dir, "*{}_post_disaster.png".format(img_id)))
+        self.dp = temp[0] if len(temp) > 0 else None # damage prediction
+        temp = glob.glob(os.path.join(targ_dir, "*{}_pre_disaster.png".format(img_id)))
+        self.lt = temp[0] if len(temp) > 0 else None # localization target
+        temp = glob.glob(os.path.join(targ_dir, "*{}_post_disaster.png".format(img_id)))
+        self.dt = temp[0] if len(temp) > 0 else None # damage target
         self.paths = (self.lp, self.dp, self.lt, self.dt)
         
     def load_and_validate_image(self, path):
-        assert path.is_file(), f"file '{path}' does not exist or is not a file"
+        if path == None:
+            return np.zeros((1024,1024)).astype(int)
         img = np.array(Image.open(path))
         assert img.dtype == np.uint8, f"{path.name} is of wrong format {img.dtype} - should be np.uint8"
         assert set(np.unique(img)) <= {0,1,2,3,4}, f"values must ints 0-4, found {np.unique(img)}, path: {path}"
@@ -194,11 +197,10 @@ class XviewMetrics:
     def get_path_handlers(self):
         self.path_handlers = []
         for path in self.targ_dir.glob('*.png'):
-            test_hold, loc_dmg, img_id, target = path.name.rstrip('.png').split('_')
-            assert loc_dmg in ['localization', 'damage'], f"target filenames must have 'localization' or 'damage' in filename, got {path}"
-            assert target == 'target', f"{target} should equal 'target' when getting path handlers"
-            if loc_dmg == 'localization': # localization or damage is fine here
-                self.path_handlers.append(PathHandler(self.pred_dir, self.targ_dir, img_id, test_hold))
+            geography, img_id, pre_post_type, disaster_or_localization = path.name.rstrip('.png').split('_')
+            assert pre_post_type in ['pre', 'post'], f"type must have 'pre' or 'post' in filename, got {path}"
+            if pre_post_type == 'pre': # localization or damage is fine here
+                self.path_handlers.append(PathHandler(self.pred_dir, self.targ_dir, img_id))
         
     def get_dfs(self):
         """

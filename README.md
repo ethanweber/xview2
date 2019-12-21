@@ -47,6 +47,19 @@ self._OUT_FP = "/home/ethanweber/Documents/xview/metrics/OUT_FP"
 python detectron2_repo/tools/train_net.py --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_3x.yaml --num-gpus 1 MODEL.WEIGHTS output/model_0054999.pth
 ```
 
+```
+python detectron2_repo/tools/train_net.py --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_1x-localization-00.yaml MODEL.WEIGHTS "./output_damage/model_0079999.pth"
+```
+
+Activate conda:
+```
+eval "$(conda shell.bash hook)" && conda activate xview
+```
+
+```
+python tools/train_net.py --num-gpus 4 --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_1x-localization-04.yaml
+```
+
 # Notes
 
 ```
