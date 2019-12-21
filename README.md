@@ -1,64 +1,80 @@
 # xview challenge
 
-# structures
+Here we describe how to use this repo to train models, run experiments, and create submissions for the xview challenge.
+
+# Repo Structure
 
 - data/
-    - train.tar
-    - train/
-    - test.tar
-    - test/
-- annotation_formatter.py
-- RunInstanceSegmentationInference.ipynb
-- CreateSubmissionFromModel.ipynb
-- ethan_create_xview_data.ipynb
-- visualize_xview_data.ipynb
-- TestEvaluationMetrics.ipynb
+    - original_train/ (original w/o tier3)
+    - test/ (test data)
+    - train/ (combined w/ tier3)
+    - inria/
+- datasets/
+    - *.json files that have COCO datasets
+- configs/
+    - *.yaml configs to use with detectron2
+
+# Cloning
+
+Make sure to clone the detectron2 submodule.
+
+`git clone --recurse-submodules -j8 git@github.com:ethanweber/xview.git`
+
+# Install Dependencies
+
+Follow this in detail: https://github.com/facebookresearch/detectron2/blob/master/INSTALL.md. Install other packages as neeeded. A conda environment is easiest to manage everything.
+
+# Create Data
+
+Use [ethan_create_xview_data.ipynb](ethan_create_xview_data.ipynb) to create datasets. Note that this requires structuring the data folder as described in the `Repo Structure` section. This will create and put data in the `datasets/` directory.
+
+# Make Sure Datasets are Registered with Detectron2
+
+Go to `detectron2_repo/detectron2/data/datasets/builtin.py` and make sure that the dataset you just created is properly registered with detectron2. Most of the defaults are included with the repo.
+
+# Confirm data is created correctly.
+
+Use [visualize_xview_data.ipynb](visualize_xview_data.ipynb) to confirm that your dataset has been created properly in COCO format. Note that the datasets should have different number of classes for pre/localization and post/disaster datasets.
+
+# Train the a Network with a Config
+
+Go to the main directory and run a training process.
+
+Example execution with one GPU. This is for the baseline localization model.
+```
+cd xview
+export CUDA_VISIBLE_DEVICES=0
+python detectron2_repo/tools/train_net.py --config-file configs/xview/mask_rcnn_R_50_FPN_1x-localization-00.yaml
+```
+
+To run from a checkpoint: (make sure path to checkpoint is correct)
+```
+python detectron2_repo/tools/train_net.py --config-file configs/xview/mask_rcnn_R_50_FPN_1x-localization-00.yaml MODEL.WEIGHTS "outputs/output_localization_00/model_0054999.pth"
+```
+
+# Testing Validation
+
+The training script will report validation for the metrics that `xview` will test. Note that these are created with a file at `detectron2_repo/detectron2/evaluation/xview_evaluation.py`. The metrics are generated with `metrics/xview2_metrics`. All data will be stored in the OUTPUT_DIR defined by the .yaml config files.
+
+Use [TestEvaluationMetrics.ipynb](TestEvaluationMetrics.ipynb) on a folder in `outputs/` (for the training session of interest) to see what some of the predictions vs. ground truths are. Be sure to specifiy if the challenge is localization/pre or disaster/post.
 
 # Create Submission
 
+Create two folders:
+```
+cd xview
+mkdir SUBMISSION_LOCALIZATION
+mkdir SUBMISSION_DAMAGE
+```
+
 Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
 
-Then create a .zip folder containing all the images (in both folders) and submit to xview2.
+Then create a .zip folder containing all the images (in both folders) and submit to xview2. It will be marked by a timestamp. Upload this diretly to the xview website.
 
-# Setup
+# View Submission.
 
-Make these folders:
-```
-metrics/PRED_DIR/
-metrics/TARG_DIR/
-output_damage/
-output_localization/
-```
+Use [TestSubmission.ipynb](TestSubmission.ipynb) file to look at some of the predictions in your most recent submission folder.
 
-Make sure to change any hardcoded paths, such as with `ethanweber`, to be your path. TODO(ethan): fix this.
-
-# Run the Model
-
-Make sure that `detectron2_repo` submodule is up to date with the `master` branch.
-
-Then update the following in `xview_evaluation.py`. This requires you to make the 3 folders in the xview directory. TODO: change this is they are there.
-```
-self._PRED_DIR = "/home/ethanweber/Documents/xview/metrics/PRED_DIR"
-self._TARG_DIR = "/home/ethanweber/Documents/xview/metrics/TARG_DIR"
-self._OUT_FP = "/home/ethanweber/Documents/xview/metrics/OUT_FP"
-```
-
-```
-python detectron2_repo/tools/train_net.py --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_3x.yaml --num-gpus 1 MODEL.WEIGHTS output/model_0054999.pth
-```
-
-```
-python detectron2_repo/tools/train_net.py --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_1x-localization-00.yaml MODEL.WEIGHTS "./output_damage/model_0079999.pth"
-```
-
-Activate conda:
-```
-eval "$(conda shell.bash hook)" && conda activate xview
-```
-
-```
-python tools/train_net.py --num-gpus 4 --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_1x-localization-04.yaml
-```
 
 # Notes
 
@@ -71,4 +87,7 @@ jupyter notebook --ip 0.0.0.0 --port 8888 --no-browser
 
 # simple fix to pycocotools
 https://github.com/cocodataset/cocoapi/issues/49
+
+# activate conda
+eval "$(conda shell.bash hook)" && conda activate xview
 ```
