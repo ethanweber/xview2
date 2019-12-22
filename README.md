@@ -1,4 +1,4 @@
-# xview challenge
+g# xview challenge
 
 # structures
 
@@ -57,7 +57,7 @@ eval "$(conda shell.bash hook)" && conda activate xview
 ```
 
 ```
-python tools/train_net.py --num-gpus 4 --config-file detectron2_repo/configs/xview/mask_rcnn_R_50_FPN_1x-localization-04.yaml
+python detectron2_repo/tools/train_net.py --config-file configs/xview/localization-21.yaml
 ```
 
 # Notes
