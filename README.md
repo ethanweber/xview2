@@ -60,14 +60,13 @@ Use [TestEvaluationMetrics.ipynb](TestEvaluationMetrics.ipynb) on a folder in `o
 
 # Create Submission
 
-Create two folders:
+Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
+
+These two folders will be made from the script.
 ```
-cd xview
 mkdir SUBMISSION_LOCALIZATION
 mkdir SUBMISSION_DAMAGE
 ```
-
-Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
 
 Then create a .zip folder containing all the images (in both folders) and submit to xview2. It will be marked by a timestamp. Upload this diretly to the xview website.
 
