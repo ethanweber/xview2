@@ -90,4 +90,7 @@ https://github.com/cocodataset/cocoapi/issues/49
 
 # activate conda
 eval "$(conda shell.bash hook)" && conda activate xview
+
+# run tensorboard
+tensorboard --logdir outputs/output_localization_00/ --host=0.0.0.0 --port 8001
 ```

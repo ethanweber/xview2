@@ -15,6 +15,7 @@ MODEL:
 SOLVER:
   IMS_PER_BATCH: 2
   BASE_LR: 0.0025
+  MAX_ITER: 200000
 OUTPUT_DIR: "./outputs/output_localization_02"
 TEST:
   EVAL_PERIOD: 1000

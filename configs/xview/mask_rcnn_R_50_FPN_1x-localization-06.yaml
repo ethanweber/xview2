@@ -1,7 +1,7 @@
 _BASE_: "../Base-RCNN-FPN.yaml"
 DATASETS:
-  TRAIN: ("combined_xview_instance_segmentation_dataset_train",)
-  TEST: ("combined_xview_instance_segmentation_dataset_val",)
+  TRAIN: ("xview_instance_segmentation_dataset_train",)
+  TEST: ("xview_instance_segmentation_dataset_val",)
 DATALOADER:
   NUM_WORKERS: 2
 MODEL:
