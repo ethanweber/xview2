@@ -1,0 +1,17 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+DATASETS:
+  TRAIN: ("xview_semantic_damage_pre_post_dark_train",)
+  TEST: ("xview_semantic_damage_pre_post_dark_val",)
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: "./outputs/output_localization_22/model_final_modified_transfer.pth"
+  SEM_SEG_HEAD:
+    NUM_CLASSES: 5
+  RESNETS:
+    DEPTH: 50
+SOLVER:
+  IMS_PER_BATCH: 2
+  BASE_LR: 0.0025
+OUTPUT_DIR: "./outputs/output_localization_25"
+TEST:
+  EVAL_PERIOD: 5000
