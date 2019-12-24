@@ -1,0 +1,23 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+DATASETS:
+  TRAIN: ("xview_semantic_localization_train",)
+  TEST: ("xview_semantic_localization_val",)
+DATALOADER:
+  NUM_WORKERS: 1
+INPUT:
+  MIN_SIZE_TRAIN: (1024,)
+  MAX_SIZE_TRAIN: 1024
+  MIN_SIZE_TEST: 0
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: "./outputs/output_localization_22/model_final_modified_transfer.pth"
+  SEM_SEG_HEAD:
+    NUM_CLASSES: 2
+  RESNETS:
+    DEPTH: 50
+SOLVER:
+  IMS_PER_BATCH: 2
+  BASE_LR: 0.0025
+OUTPUT_DIR: "./outputs/output_localization_26"
+TEST:
+  EVAL_PERIOD: 5000

@@ -25,7 +25,7 @@ from typing import Union, List
 import glob
 
 class PathHandler:
-    def __init__(self, pred_dir:Path, targ_dir:Path, img_id:str):
+    def __init__(self, pred_dir:Path, targ_dir:Path, img_id:str, quad:str):
         """
         Args:
             pred_dir  (Path): directory of localization and damage predictions
@@ -38,23 +38,23 @@ class PathHandler:
         assert isinstance(targ_dir, Path), f"targ_dir '{targ_dir}' should be of type Path, got {type(pred_dir)}"
         assert targ_dir.is_dir(), f"Directory '{targ_dir}' does not exist or is not a directory"
         
-        temp = glob.glob(os.path.join(pred_dir, "*{}_pre_disaster.png".format(img_id)))
+        temp = glob.glob(os.path.join(pred_dir, "*{}_pre_disaster_{}.png".format(img_id, quad)))
         self.lp = temp[0] if len(temp) > 0 else None # localization prediction
-        temp = glob.glob(os.path.join(pred_dir, "*{}_post_disaster.png".format(img_id)))
+        temp = glob.glob(os.path.join(pred_dir, "*{}_post_disaster_{}.png".format(img_id, quad)))
         self.dp = temp[0] if len(temp) > 0 else None # damage prediction
-        temp = glob.glob(os.path.join(targ_dir, "*{}_pre_disaster.png".format(img_id)))
+        temp = glob.glob(os.path.join(targ_dir, "*{}_pre_disaster_{}.png".format(img_id, quad)))
         self.lt = temp[0] if len(temp) > 0 else None # localization target
-        temp = glob.glob(os.path.join(targ_dir, "*{}_post_disaster.png".format(img_id)))
+        temp = glob.glob(os.path.join(targ_dir, "*{}_post_disaster_{}.png".format(img_id, quad)))
         self.dt = temp[0] if len(temp) > 0 else None # damage target
         self.paths = (self.lp, self.dp, self.lt, self.dt)
         
     def load_and_validate_image(self, path):
         if path == None:
-            return np.zeros((1024,1024)).astype(int)
+            return np.zeros((512,512)).astype(int)
         img = np.array(Image.open(path))
         assert img.dtype == np.uint8, f"{path.name} is of wrong format {img.dtype} - should be np.uint8"
         assert set(np.unique(img)) <= {0,1,2,3,4}, f"values must ints 0-4, found {np.unique(img)}, path: {path}"
-        assert img.shape == (1024,1024), f"{path} must be a 1024x1024 image"
+        assert img.shape == (512,512), f"{path} must be a 1024x1024 image"
         return img
     
     def load_images(self):
@@ -197,10 +197,10 @@ class XviewMetrics:
     def get_path_handlers(self):
         self.path_handlers = []
         for path in self.targ_dir.glob('*.png'):
-            geography, img_id, pre_post_type, disaster_or_localization = path.name.rstrip('.png').split('_')
+            geography, img_id, pre_post_type, disaster_or_localization, quad = path.name.rstrip('.png').split('_')
             assert pre_post_type in ['pre', 'post'], f"type must have 'pre' or 'post' in filename, got {path}"
             if pre_post_type == 'pre': # localization or damage is fine here
-                self.path_handlers.append(PathHandler(self.pred_dir, self.targ_dir, img_id))
+                self.path_handlers.append(PathHandler(self.pred_dir, self.targ_dir, img_id, quad))
         
     def get_dfs(self):
         """

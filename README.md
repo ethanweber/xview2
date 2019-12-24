@@ -1,4 +1,4 @@
-# xview challenge
+g# xview challenge
 
 Here we describe how to use this repo to train models, run experiments, and create submissions for the xview challenge.
 
@@ -44,7 +44,7 @@ Example execution with one GPU. This is for the baseline localization model.
 ```
 cd xview
 export CUDA_VISIBLE_DEVICES=0
-python detectron2_repo/tools/train_net.py --config-file configs/xview/mask_rcnn_R_50_FPN_1x-localization-00.yaml
+python detectron2_repo/tools/train_net.py --config-file configs/xview/localization-25.yaml
 ```
 
 To run from a checkpoint: (make sure path to checkpoint is correct)
@@ -60,14 +60,13 @@ Use [TestEvaluationMetrics.ipynb](TestEvaluationMetrics.ipynb) on a folder in `o
 
 # Create Submission
 
-Create two folders:
+Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
+
+These two folders will be made from the script.
 ```
-cd xview
 mkdir SUBMISSION_LOCALIZATION
 mkdir SUBMISSION_DAMAGE
 ```
-
-Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
 
 Then create a .zip folder containing all the images (in both folders) and submit to xview2. It will be marked by a timestamp. Upload this diretly to the xview website.
 
@@ -90,4 +89,11 @@ https://github.com/cocodataset/cocoapi/issues/49
 
 # activate conda
 eval "$(conda shell.bash hook)" && conda activate xview
+
+# ssh / github issues
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa_personal
+
+# transfer learning
+https://github.com/facebookresearch/detectron2/issues/222
 ```
