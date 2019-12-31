@@ -1,0 +1,21 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+DATASETS:
+  TRAIN: ("xview_semantic_damage_quad_train",)
+  TEST: ("xview_semantic_damage_quad_val",)
+INPUT:
+  MIN_SIZE_TRAIN: (512,)
+  MAX_SIZE_TRAIN: 512
+  MIN_SIZE_TEST: 0
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  SEM_SEG_HEAD:
+    NUM_CLASSES: 5
+  RESNETS:
+    DEPTH: 50
+SOLVER:
+  IMS_PER_BATCH: 8
+  BASE_LR: 0.0025
+OUTPUT_DIR: "./outputs/output_localization_30"
+TEST:
+  EVAL_PERIOD: 2000
