@@ -1,3 +1,3 @@
 [submodule "detectron2_repo"]
 	path = detectron2_repo
-	url = git@github.com:ethanweber/detectron2.git
+	url = https://github.com/ethanweber/detectron2.git
