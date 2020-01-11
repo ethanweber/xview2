@@ -44,12 +44,6 @@ cfg_damage.MODEL.WEIGHTS = os.path.join("model_weights.pth")
 # cfg_damage.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7 # set the testing threshold for this model
 predictor_damage = DefaultPredictor(cfg_damage)
 
-image_filenames = sorted(glob.glob("data/test_images_quad/*"))
-count = 0
-bl = None
-br = None
-tl = None
-tr = None
 temp = np.zeros((1024, 1024)).astype(int)
     
 # Load the images.
