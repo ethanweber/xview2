@@ -41,6 +41,7 @@ DAMAGE_MODEL_CONFIG = "./configs/xview/joint-11.yaml"
 cfg_damage.merge_from_file(DAMAGE_MODEL_CONFIG)
 # Load damage checkpoint.
 cfg_damage.MODEL.WEIGHTS = os.path.join("model_weights.pth")
+cfg_damage.MODEL.DEVICE = "cpu"
 # cfg_damage.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7 # set the testing threshold for this model
 predictor_damage = DefaultPredictor(cfg_damage)
 
