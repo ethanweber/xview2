@@ -32,9 +32,17 @@ RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=down
 RUN git submodule init && git submodule update
 # ARG INCUBATOR_VER=unknown
 WORKDIR /xview/detectron2_repo
+RUN conda install -c anaconda scikit-image
 RUN apt-get install -y g++
 RUN python setup.py build develop
 WORKDIR /xview
 ADD test_pre_00123.png /test_pre_00123.png
 ADD test_post_00123.png /test_post_00123.png
-CMD ["wrapper.py"]
+RUN conda install -y pillow=6.1
+RUN pip install -U git+https://github.com/facebookresearch/fvcore.git
+RUN conda install -c anaconda -y scikit-image
+RUN apt-get install -y vim
+WORKDIR /
+RUN mkdir temp
+WORKDIR /xview
+ENTRYPOINT ["python", "wrapper.py"]
