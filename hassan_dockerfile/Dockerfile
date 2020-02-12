@@ -29,7 +29,7 @@ RUN git clone https://github.com/ethanweber/xview.git
 WORKDIR /xview
 RUN apt-get install -y wget
 RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1uw3BiKYq5dzYVOSj_pyPUAPrB8F4Lwh8' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1uw3BiKYq5dzYVOSj_pyPUAPrB8F4Lwh8" -O model_weights.pth && rm -rf /tmp/cookies.txt
-RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1nM76Kn7w7I-NL4xljbkNpWU4_TgqmAHj' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1uw3BiKYq5dzYVOSj_pyPUAPrB8F4Lwh8" -O hassan_model_weights.pth && rm -rf /tmp/cookies.txt
+RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1nM76Kn7w7I-NL4xljbkNpWU4_TgqmAHj' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1nM76Kn7w7I-NL4xljbkNpWU4_TgqmAHj" -O hassan_model_weights.pth && rm -rf /tmp/cookies.txt
 RUN git submodule init && git submodule update
 # ARG INCUBATOR_VER=unknown
 WORKDIR /xview/detectron2_repo

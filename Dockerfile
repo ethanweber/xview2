@@ -46,3 +46,4 @@ WORKDIR /
 RUN mkdir temp
 WORKDIR /xview
 ENTRYPOINT ["python", "wrapper.py"]
+
