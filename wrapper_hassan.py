@@ -96,28 +96,28 @@ temp[512:1024,512:1024] = br
 # tl
 temp_image = image[0:512,0:512]
 temp_pre_image = pre_image[0:512,0:512]
-outputs = predictor_damage(temp_image, temp_pre_image)
+outputs = predictor_localization(temp_image, temp_pre_image)
 output = outputs["sem_seg"].argmax(dim=0).cpu()
 tl = np.array(output, dtype=np.int)
 
 # tr
 temp_image = image[0:512,512:1024]
 temp_pre_image = pre_image[0:512,512:1024]
-outputs = predictor_damage(temp_image, temp_pre_image)
+outputs = predictor_localization(temp_image, temp_pre_image)
 output = outputs["sem_seg"].argmax(dim=0).cpu()
 tr = np.array(output, dtype=np.int)
 
 # bl
 temp_image = image[512:1024,0:512]
 temp_pre_image = pre_image[512:1024,0:512]
-outputs = predictor_damage(temp_image, temp_pre_image)
+outputs = predictor_localization(temp_image, temp_pre_image)
 output = outputs["sem_seg"].argmax(dim=0).cpu()
 bl = np.array(output, dtype=np.int)
 
 # br
 temp_image = image[512:1024,512:1024]
 temp_pre_image = pre_image[512:1024,512:1024]
-outputs = predictor_damage(temp_image, temp_pre_image)
+outputs = predictor_localization(temp_image, temp_pre_image)
 output = outputs["sem_seg"].argmax(dim=0).cpu()
 br = np.array(output, dtype=np.int)
 
