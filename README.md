@@ -1,8 +1,8 @@
 # xview2 challenge code
 
-> April 11, 2020: Note that some of these instructions may be outdated due to the nature of the competition, but we are in the process of cleaning up code for reproducability. Training and testing will work for semantic segmentation, but the capibilities for instance segmentation with COCO data, as well as some handy visualizations, are in the works of useful to others. Stay tuned, and reach out to ejweber@mit.edu or hassanmohamed@alum.mit.edu for details.
+> April 11, 2020: Note that some of these instructions may be outdated due to the nature of the competition, but we are in the process of cleaning up code for reproducability. Training and testing will work for semantic segmentation, but the capibilities for instance segmentation with COCO data, as well as some handy visualizations, need to be better documented. Stay tuned, and reach out to ejweber@mit.edu or hassanmohamed@alum.mit.edu for details.
 
-This is the codebase used for our xview2 submission, which received 2nd place in Track 3: "Evaluation Only". The project is built on top of the [detectron2](https://github.com/facebookresearch/detectron2) repo by Facebook. The goal of this project is to do building damage assessment with before/after image pairs. We use a model to utilize this multi-temporal information. The prediction of our network is a 5-channel pixel-wise damage level prediction:
+This is the codebase used for our xview2 submission, which received 2nd place in Track 3: "Evaluation Only". On the leaderboard (https://xview2.org/challenge), our final submission was ranked 40 before unverified code was removed. The project is built on top of the [detectron2](https://github.com/facebookresearch/detectron2) repo by Facebook. The goal of this project is to do building damage assessment with before/after image pairs. We use a model to utilize this multi-temporal information. The prediction of our network is a 5-channel pixel-wise damage level prediction:
 
 - 0: no building
 - 1: undamaged building
@@ -66,7 +66,7 @@ TEST:
 
 `xview_semantic_damage_quad_*` is the training and validation set used while training the model. This consists of pre/post images and their semantic segmentation ground truth labels. Notice that we use 512 as the image size, which is smaller than the original 1024 x 1024 images in originally downloaded xBD dataset. See `NB_make_quad_folder.ipynb` to create new this dataset, which is the origal dataset but split into quadrants for higher resolution.
 
-Look at `detectron2_repo/detectron2/data/datasets/builtin.py`, where the datasets are registered by name. It's crucial the data exists where specified in the `data` folder. Note that this codebase originally reformed xBD to COCO, but we've moved away from this and switched to semenatic segmentation. The code is not maintained for COCO, but some notebook files demonstrate creating this data, such as `NB_create_xview_data.ipynb` and `NB_visualize_xview_coco_data.ipynb`.
+Look at `detectron2_repo/detectron2/data/datasets/builtin.py`, where the datasets are registered by name. It's crucial the data exists where specified in the `data` folder. Note that this codebase originally reformated xBD annotations to COCO, to use instance segmentation, but we've moved away from this and switched to semenatic segmentation. The code is not maintained for COCO, but some notebook files demonstrate creating this data, such as `NB_create_xview_data.ipynb` and `NB_visualize_xview_coco_data.ipynb`.
 
 # Train the network with a config
 
@@ -86,7 +86,7 @@ python detectron2_repo/tools/train_net.py --config-file configs/xview/joint-11.y
 
 # Looking at results
 
-We compute the metrics used by xview2 and display them in Tensorboard during training. Original code for the metrics is located at `detectron2_repo/detectron2/evaluation/xview_evaluation.py`.
+We compute the metrics used by xview2 and display them in Tensorboard during training. Original code for the metrics is located at `detectron2_repo/detectron2/evaluation/xview_evaluation.py`. Notice that intermediate results during training are stored in `cfg.OUTPUT_DIR/PRED_DIR`, `cfg.OUTPUT_DIR/PRED_DIR`, and `cfg.OUTPUT_DIR/PRED_DIR`, where `cfg.OUTPUT_DIR` is specified as in the .yml config above.
 
 # Create submission
 
