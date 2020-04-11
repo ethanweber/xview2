@@ -1,42 +1,72 @@
-# xview challenge
+# Xview2 challenge code
 
-Here we describe how to use this repo to train models, run experiments, and create submissions for the xview challenge.
+This is the codebase used for our xview2 submission, which received 2nd place in Track 3: "Evaluation Only". The project is built on top of the [detectron2](https://github.com/facebookresearch/detectron2) repo by Facebook. The goal of this project is to do building damage assessment with before/after image pairs. We use a model to utilize this multi-temporal information. The prediction of our network is a 5-channel pixel-wise damage level prediction:
 
-# Repo Structure
+- 0: no building
+- 1: undamaged building
+- 2: building with minor damage
+- 3: building with major damage
+- 4: destroyed building
+
+More specifics on the segmentation problem can be found at https://xview2.org/challenge.
+
+# Clone and install dependencies
+
+Start by cloning the repo: `git clone --recurse-submodules -j8 git@github.com:ethanweber/xview2.git`. Then, follow this in detail for installing dependencies: https://github.com/facebookresearch/detectron2/blob/master/INSTALL.md. Install other packages as neeeded. A conda environment is convenient to manage everything.
+
+# Download and format data
+
+Download data from the xview2 site: https://xview2.org/download. Store the in the `data` folder, as decribed below. We do not use the "holdout set" in our work.
 
 - data/
     - original_train/ (original w/o tier3)
     - test/ (test data)
     - train/ (combined w/ tier3)
-    - inria/
-- datasets/
-    - *.json files that have COCO datasets
-- configs/
+    - train_gt/
+    - train_images_quad/
+
+Notice that the folders should be named in this format, where `data/train` contains both the "training set" and "additional tier3 training data". We use "train" for the experiments in our work.
+
+# Model configuration
+
+We store configs in the following format.
+
+- configs/xview
     - *.yaml configs to use with detectron2
 
-# Cloning
+Our best config is located at `configs/xview/joint-11.yaml`. In this file, we see the following configuation:
 
-Make sure to clone the detectron2 submodule.
+```
+_BASE_: "../Base-RCNN-FPN.yaml"
+DATASETS:
+  TRAIN: ("xview_semantic_damage_quad_train",)
+  TEST: ("xview_semantic_damage_quad_val",)
+INPUT:
+  MIN_SIZE_TRAIN: (512,)
+  MAX_SIZE_TRAIN: 512
+  MIN_SIZE_TEST: 0
+MODEL:
+  META_ARCHITECTURE: "SemanticSegmentor"
+  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  SEM_SEG_HEAD:
+    NUM_CLASSES: 5
+  RESNETS:
+    DEPTH: 50
+SOLVER:
+  IMS_PER_BATCH: 8
+  BASE_LR: 0.01
+  STEPS: (210000, 250000)
+  MAX_ITER: 270000
+OUTPUT_DIR: "./outputs/output_joint_11"
+TEST:
+  EVAL_PERIOD: 5000
+```
 
-`git clone --recurse-submodules -j8 git@github.com:ethanweber/xview.git`
+`xview_semantic_damage_quad_*` is the training and validation set used while training the model. This consists of pre/post images and their semantic segmentation ground truth labels. Notice that we use 512 as the image size, which is smaller than the original 1024 x 1024 images in originally downloaded xBD dataset. See `NB_make_quad_folder.ipynb` to create new this dataset, which is the origal dataset but split into quadrants for higher resolution.
 
-# Install Dependencies
+Look at `detectron2_repo/detectron2/data/datasets/builtin.py`, where the datasets are registered by name. It's crucial the data exists where specified in the `data` folder. Note that this codebase originally reformed xBD to COCO, but we've moved away from this and switched to semenatic segmentation. The code is not maintained for COCO, but some notebook files demonstrate creating this data, such as `NB_create_xview_data.ipynb` and `NB_visualize_xview_coco_data.ipynb`.
 
-Follow this in detail: https://github.com/facebookresearch/detectron2/blob/master/INSTALL.md. Install other packages as neeeded. A conda environment is easiest to manage everything.
-
-# Create Data
-
-Use [ethan_create_xview_data.ipynb](ethan_create_xview_data.ipynb) to create datasets. Note that this requires structuring the data folder as described in the `Repo Structure` section. This will create and put data in the `datasets/` directory.
-
-# Make Sure Datasets are Registered with Detectron2
-
-Go to `detectron2_repo/detectron2/data/datasets/builtin.py` and make sure that the dataset you just created is properly registered with detectron2. Most of the defaults are included with the repo.
-
-# Confirm data is created correctly.
-
-Use [visualize_xview_data.ipynb](visualize_xview_data.ipynb) to confirm that your dataset has been created properly in COCO format. Note that the datasets should have different number of classes for pre/localization and post/disaster datasets.
-
-# Train the a Network with a Config
+# Train the network with a config
 
 Go to the main directory and run a training process.
 
@@ -44,23 +74,21 @@ Example execution with one GPU. This is for the baseline localization model.
 ```
 cd xview
 export CUDA_VISIBLE_DEVICES=0
-python detectron2_repo/tools/train_net.py --config-file configs/xview/localization-25.yaml
+python detectron2_repo/tools/train_net.py --config-file configs/xview/joint-11.yaml
 ```
 
 To run from a checkpoint: (make sure path to checkpoint is correct)
 ```
-python detectron2_repo/tools/train_net.py --config-file configs/xview/mask_rcnn_R_50_FPN_1x-localization-00.yaml MODEL.WEIGHTS "outputs/output_localization_00/model_0054999.pth"
+python detectron2_repo/tools/train_net.py --config-file configs/xview/joint-11.yaml MODEL.WEIGHTS "outputs/output_joint_11/model_0054999.pth"
 ```
 
-# Testing Validation
+# Looking at results
 
-The training script will report validation for the metrics that `xview` will test. Note that these are created with a file at `detectron2_repo/detectron2/evaluation/xview_evaluation.py`. The metrics are generated with `metrics/xview2_metrics`. All data will be stored in the OUTPUT_DIR defined by the .yaml config files.
+We compute the metrics used by xview2 and display them in Tensorboard during training. Original code for the metrics is located at `detectron2_repo/detectron2/evaluation/xview_evaluation.py`.
 
-Use [TestEvaluationMetrics.ipynb](TestEvaluationMetrics.ipynb) on a folder in `outputs/` (for the training session of interest) to see what some of the predictions vs. ground truths are. Be sure to specifiy if the challenge is localization/pre or disaster/post.
+# Create submission
 
-# Create Submission
-
-Use [CreateSubmissionFromModel.ipynb](CreateSubmissionFromModel.ipynb) file.
+Use [NB_create_submission_from_model-quad.ipynb](NB_create_submission_from_model-quad.ipynb) to create the submission.
 
 These two folders will be made from the script.
 ```
@@ -70,12 +98,12 @@ mkdir SUBMISSION_DAMAGE
 
 Then create a .zip folder containing all the images (in both folders) and submit to xview2. It will be marked by a timestamp. Upload this diretly to the xview website.
 
-# View Submission.
+# View submission
 
-Use [TestSubmission.ipynb](TestSubmission.ipynb) file to look at some of the predictions in your most recent submission folder.
+Use [NB_visualize_submission_folder.ipynb](NB_visualize_submission_folder.ipynb) file to look at some of the predictions in your most recent submission folder.
 
 
-# Notes
+# Handy notes
 
 ```
 # avoid too many files open errors
