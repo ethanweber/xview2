@@ -1,4 +1,4 @@
-g# xview challenge
+# xview challenge
 
 Here we describe how to use this repo to train models, run experiments, and create submissions for the xview challenge.
 
