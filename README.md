@@ -64,9 +64,9 @@ TEST:
   EVAL_PERIOD: 5000
 ```
 
-`xview_semantic_damage_quad_*` is the training and validation set used while training the model. This consists of pre/post images and their semantic segmentation ground truth labels. Notice that we use 512 as the image size, which is smaller than the original 1024 x 1024 images in originally downloaded xBD dataset. See `NB_make_quad_folder.ipynb` to create new this dataset, which is the origal dataset but split into quadrants for higher resolution.
+`xview_semantic_damage_quad_*` is the training and validation set used while training the model. This consists of pre/post images and their semantic segmentation ground truth labels. Notice that we use 512 as the image size, which is smaller than the original 1024 x 1024 images in originally downloaded xBD dataset. See `notebooks/NB_make_quad_folder.ipynb` to create new this dataset, which is the origal dataset but split into quadrants for higher resolution.
 
-Look at `detectron2_repo/detectron2/data/datasets/builtin.py`, where the datasets are registered by name. It's crucial the data exists where specified in the `data` folder. Note that this codebase originally reformated xBD annotations to COCO, to use instance segmentation, but we've moved away from this and switched to semenatic segmentation. The code is not maintained for COCO, but some notebook files demonstrate creating this data, such as `NB_create_xview_data.ipynb` and `NB_visualize_xview_coco_data.ipynb`.
+Look at `detectron2_repo/detectron2/data/datasets/builtin.py`, where the datasets are registered by name. It's crucial the data exists where specified in the `data` folder. Note that this codebase originally reformated xBD annotations to COCO, to use instance segmentation, but we've moved away from this and switched to semenatic segmentation. The code is not maintained for COCO, but some notebook files demonstrate creating this data, such as `notebooks/NB_create_xview_data.ipynb` and `notebooks/NB_visualize_xview_coco_data.ipynb`.
 
 # Train the network with a config
 
@@ -90,7 +90,7 @@ We compute the metrics used by xview2 and display them in Tensorboard during tra
 
 # Create submission
 
-Use [NB_create_submission_from_model-quad.ipynb](NB_create_submission_from_model-quad.ipynb) to create the submission.
+Use [notebooks/NB_create_submission_from_model-quad.ipynb](notebooks/NB_create_submission_from_model-quad.ipynb) to create the submission.
 
 These two folders will be made from the script.
 ```
@@ -102,7 +102,7 @@ Then create a .zip folder containing all the images (in both folders) and submit
 
 # View submission
 
-Use [NB_visualize_submission_folder.ipynb](NB_visualize_submission_folder.ipynb) file to look at some of the predictions in your most recent submission folder.
+Use [notebooks/NB_visualize_submission_folder.ipynb](notebooks/NB_visualize_submission_folder.ipynb) file to look at some of the predictions in your most recent submission folder.
 
 
 # Handy notes
