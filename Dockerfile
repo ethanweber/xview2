@@ -32,7 +32,7 @@ RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=down
 RUN git submodule init && git submodule update
 # ARG INCUBATOR_VER=unknown
 WORKDIR /xview/detectron2_repo
-RUN conda install -c anaconda scikit-image
+RUN conda install -c anaconda -y scikit-image
 RUN apt-get install -y g++
 RUN python setup.py build develop
 WORKDIR /xview
