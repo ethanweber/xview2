@@ -1,8 +1,8 @@
 # xview2 challenge code
 
-> April 11, 2020: Note that some of these instructions may be outdated due to the nature of the competition, but we are in the process of cleaning up code for reproducability. Training and testing will work for semantic segmentation, but the capibilities for instance segmentation with COCO data, as well as some handy visualizations, need to be better documented. Stay tuned, and reach out to ejweber@mit.edu or hassanmohamed@alum.mit.edu for details.
-
 > Our paper "Building Disaster Damage Assessment in Satellite Imagery with Multi-Temporal Fusion" can be found [here](https://arxiv.org/abs/2004.05525), and our presentation in the AI for Earth Sciences workshop at ICLR 2020 is located on [this page](https://ai4earthscience.github.io/iclr-2020-workshop/).
+
+> April 11, 2020: Note that some of these instructions may be outdated due to the nature of the competition, but we are in the process of cleaning up code for reproducability. Training and testing will work for semantic segmentation, but the capibilities for instance segmentation with COCO data, as well as some handy visualizations, need to be better documented. Stay tuned, and reach out to ejweber@mit.edu or hassanmohamed@alum.mit.edu for details.
 
 This is the codebase used for our xview2 submission, which received 2nd place in Track 3: "Evaluation Only". On the leaderboard (https://xview2.org/challenge), our final submission was ranked 40 before unverified code was removed. The project is built on top of the [detectron2](https://github.com/facebookresearch/detectron2) repo by Facebook. The goal of this project is to do building damage assessment with before/after image pairs. We use a model to utilize this multi-temporal information. The prediction of our network is a 5-channel pixel-wise damage level prediction:
 
